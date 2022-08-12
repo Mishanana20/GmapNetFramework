@@ -1,19 +1,20 @@
-﻿using GMap.NET.WindowsForms;
+﻿using GMap.NET;
+using GMap.NET.MapProviders;
+using GMap.NET.WindowsForms;
+using GMap.NET.WindowsForms.Markers;
 using System;
 using System.Collections.Generic;
-using GMap.NET;
-using GMap.NET.MapProviders;
-using GMap.NET.WindowsForms.Markers;
 
 namespace GmapNetFramework
 {
-    internal class Markers: Form1
+    internal class Markers : Form1
     {
         public static void ShowMarkers(System.Windows.Forms.TextBox textBox1, System.Windows.Forms.TextBox textBox2, GMapControl gMapControl1, List<Item> items)
         {
             SQLConnection markerdb = new SQLConnection();
             markerdb.OpenConnection();
             markerdb.GetItems(items);
+
             gMapControl1.ShowCenter = false;
             gMapControl1.MapProvider = GMapProviders.GoogleMap;
             double lat = Convert.ToDouble(textBox2.Text);
@@ -38,6 +39,8 @@ namespace GmapNetFramework
                 markers.Markers.Add(marker);
             }
             gMapControl1.Overlays.Add(markers);
+
+            //без этого маркеры сначала будут в кучке. Скорее всего заковырки библиотеки
             gMapControl1.Zoom++;
             gMapControl1.Zoom--;
             markerdb.CloseConnection();
@@ -53,17 +56,20 @@ namespace GmapNetFramework
             gMapControl1.Zoom = 2;
         }
 
+        /// <summary>
+        /// Сохраняем новую позицию маркера в БД и в списке объектов по id объекта 
+        /// </summary>
+        /// <param name="selectedMarker"></param>
+        /// <param name="items"></param>
         public static void NewMarkerPosition(GMapMarker selectedMarker, List<Item> items)
         {
             Item item = items.Find(a => a.Id == (int)selectedMarker.Tag);
-            item.lng = selectedMarker.Position.Lng; 
+            item.lng = selectedMarker.Position.Lng;
             item.lat = selectedMarker.Position.Lat;
             SQLConnection markerdb = new SQLConnection();
             markerdb.OpenConnection();
             markerdb.SaveChange(item);
             markerdb.CloseConnection();
-
-            Console.WriteLine(($"{item.Name}\n{item.lng}  {item.lat}"));
             selectedMarker.ToolTipText = ($"{item.Name}\n{item.lng}  {item.lat}");
         }
     }

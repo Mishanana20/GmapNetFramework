@@ -1,10 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-//using Microsoft.Data.SqlClient;
-//using Microsoft.Data.SqlClient.Server;
 using System.Data.SqlClient;
 
 namespace GmapNetFramework
@@ -12,25 +7,21 @@ namespace GmapNetFramework
     class SQLConnection
     {
         SqlConnection sqlConnection = new SqlConnection(@"Data Source=DESKTOP-U4MN4UD\SQLEXPRESS;Initial Catalog=TestTask_Gmap;Integrated Security=True");
+
         public void OpenConnection()
         {
             if (sqlConnection.State == System.Data.ConnectionState.Closed)
             {
                 sqlConnection.Open();
             }
-            if (sqlConnection.State == System.Data.ConnectionState.Open)
-            { Console.WriteLine("я открыт"); }
-
         }
+
         public void CloseConnection()
         {
             if (sqlConnection.State == System.Data.ConnectionState.Open)
             {
                 sqlConnection.Close();
             }
-            if (sqlConnection.State == System.Data.ConnectionState.Open)
-            { Console.WriteLine("я закрыт"); }
-
         }
 
         public void GetItems(List<Item> items)
@@ -56,12 +47,16 @@ namespace GmapNetFramework
             }
         }
 
-        public void SaveChange(Item item) 
+        /// <summary>
+        /// Сохраняем изменения в бд при перетаскивании маркера
+        /// </summary>
+        /// <param name="item"></param>
+        public void SaveChange(Item item)
         {
             ///в float ms sql используется точка как разделитель, в c# запятая из-за региональных особенностей
             var p = Math.Truncate((float)item.lng);
             string t = (item.lng - p).ToString();
-            string lng = p.ToString() + "." + t.Substring(2); 
+            string lng = p.ToString() + "." + t.Substring(2);
 
             p = Math.Truncate((float)item.lat);
             t = (item.lat - p).ToString();
@@ -73,7 +68,6 @@ namespace GmapNetFramework
             SqlCommand command = new SqlCommand(sqlExpression, sqlConnection);
             Console.WriteLine(command.ExecuteNonQuery());
         }
-
     }
 }
 

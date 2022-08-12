@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace GmapNetFramework
+﻿namespace GmapNetFramework
 {
     /// <summary>
     /// Id/name/lng/lat
